@@ -39,7 +39,10 @@ def create(target, module_name):
 	# build in C++ mode
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:
-	my_module.add_module_depend('cxx')
+	my_module.add_module_depend([
+	    'cxx',
+	    'pthread'
+	    ])
 	
 	my_module.add_path(tools.get_current_path(__file__))
 	return my_module
