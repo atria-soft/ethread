@@ -40,9 +40,14 @@ def create(target, module_name):
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:
 	my_module.add_depend([
-	    'cxx',
-	    'pthread'
+	    'cxx'
 	    ])
+	#pthread is not availlable on Windows
+	if    "Linux" in target.get_type() \
+	   or "Android" in target.get_type():
+		my_module.add_depend([
+		    'pthread'
+		    ])
 	
 	my_module.add_path(tools.get_current_path(__file__))
 	return my_module
