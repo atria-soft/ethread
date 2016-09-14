@@ -9,6 +9,9 @@
 
 #include <thread>
 
+/**
+ * @brief ethread main namespace
+ */
 namespace ethread {
 	/**
 	 * @brief get human readable thread ID. (not the std::thread::get_id())
@@ -39,7 +42,7 @@ namespace ethread {
 	std::string getName();
 	/**
 	 * @brief Get an other thread name
-	 * @praram[in] _thread Thread handle
+	 * @param[in] _thread Thread handle
 	 * @return The external thread name of the thread
 	 */
 	std::string getName(std::thread& _thread);
