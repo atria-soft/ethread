@@ -8,6 +8,7 @@
 #pragma once
 
 #include <thread>
+#include <string>
 
 /**
  * @brief ethread main namespace
