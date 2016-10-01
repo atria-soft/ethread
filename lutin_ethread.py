@@ -33,7 +33,7 @@ def create(target, module_name):
 		])
 	
 	my_module.add_header_file([
-		'ethread/tools.h',
+		'ethread/tools.hpp',
 		])
 	
 	# build in C++ mode

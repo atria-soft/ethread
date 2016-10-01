@@ -6,7 +6,7 @@
  * @license APACHE v2.0 (see license file)
  */
 
-#include <ethread/tools.h>
+#include <ethread/tools.hpp>
 #include <mutex>
 #include <map>
 

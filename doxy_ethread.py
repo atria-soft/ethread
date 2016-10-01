@@ -15,7 +15,7 @@ def create(target, module_name):
 	    "doc"
 	    ])
 	my_module.add_file_patterns([
-	    '*.h',
+	    '*.hpp',
 	    '*.md',
 	    ])
 	
