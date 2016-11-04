@@ -61,7 +61,8 @@ static void setThreadName(std::thread* _thread, const std::string& _name) {
 	}
 	g_lock.unlock();
 	// try now to set the thread name with Pthread
-	#if defined(__TARGET_OS__Linux)
+	#if     defined(__TARGET_OS__Linux) \
+	    && !defined(__TARGET_OS__Web)
 		pthread_t pthreadID;
 		if (_thread == nullptr) {
 			pthreadID = pthread_self();
@@ -104,7 +105,8 @@ std::string ethread::getName(std::thread& _thread) {
 	return getThreadName(_thread.get_id());
 }
 
-#if defined(__TARGET_OS__Linux)
+#if    defined(__TARGET_OS__Linux) \
+    && !defined(__TARGET_OS__Web)
 	static void setThreadPriority(pthread_t _threadID, int32_t _priority) {
 		int retcode;
 		int policy;
@@ -148,21 +150,24 @@ std::string ethread::getName(std::thread& _thread) {
 
 
 void ethread::setPriority(int32_t _priority) {
-	#if defined(__TARGET_OS__Linux)
+	#if    defined(__TARGET_OS__Linux) \
+	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = pthread_self();
 		setThreadPriority(threadID, _priority);
 	#endif
 }
 
 void ethread::setPriority(std::thread& _thread, int32_t _priority) {
-	#if defined(__TARGET_OS__Linux)
+	#if    defined(__TARGET_OS__Linux) \
+	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = (pthread_t) _thread.native_handle();
 		setThreadPriority(threadID, _priority);
 	#endif
 }
 
 int32_t ethread::getPriority() {
-	#if defined(__TARGET_OS__Linux)
+	#if    defined(__TARGET_OS__Linux) \
+	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = pthread_self();
 		return getThreadPriority(threadID);
 	#else
@@ -171,7 +176,8 @@ int32_t ethread::getPriority() {
 }
 
 int32_t ethread::getPriority(std::thread& _thread) {
-	#if defined(__TARGET_OS__Linux)
+	#if    defined(__TARGET_OS__Linux) \
+	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = static_cast<pthread_t>(_thread.native_handle());
 		return getThreadPriority(threadID);
 	#else
