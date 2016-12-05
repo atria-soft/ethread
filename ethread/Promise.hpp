@@ -7,15 +7,17 @@
 
 #include <mutex>
 #include <thread>
-#include <ethread/Promise.hpp>
-#include <ememory/memory.hpp>
+#include <echrono/Duration.hpp>
 
 namespace ethread {
-	class Future {
+	class Promise {
 		private:
-			ememory::SharedPtr<ethread::Promise> m_promise;
+			std::mutex m_mutex;
+			std::function<void()> m_callback;
+			bool m_isFinished;
 		public:
-			Future(ememory::SharedPtr<ethread::Promise> _promise=nullptr);
+			Promise();
+			void finish();
 			bool isFinished();
 			bool wait(echrono::Duration _delay=echrono::seconds(2));
 			void andThen(std::function<void()> _action);

@@ -6,18 +6,20 @@
 #pragma once
 
 #include <mutex>
+#include <vector>
 #include <thread>
-#include <ethread/Promise.hpp>
+#include <ethread/Future.hpp>
 #include <ememory/memory.hpp>
 
 namespace ethread {
-	class Future {
+	class PoolAction {
 		private:
+			uint64_t m_currentPoolId;
 			ememory::SharedPtr<ethread::Promise> m_promise;
+			std::function<void()> m_call;
 		public:
-			Future(ememory::SharedPtr<ethread::Promise> _promise=nullptr);
-			bool isFinished();
-			bool wait(echrono::Duration _delay=echrono::seconds(2));
-			void andThen(std::function<void()> _action);
+			PoolAction(uint64_t _currentPoolId, ememory::SharedPtr<ethread::Promise> _promise, std::function<void()> _call);
+			uint64_t getPoolId() const;
+			void call();
 	};
 }

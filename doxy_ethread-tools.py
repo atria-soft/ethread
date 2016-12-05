@@ -15,7 +15,7 @@ def create(target, module_name):
 	    "doc"
 	    ])
 	my_module.add_file_patterns([
-	    '*.hpp',
+	    'tools.hpp',
 	    '*.md',
 	    ])
 	my_module.add_exclude_symbols([
@@ -23,7 +23,6 @@ def create(target, module_name):
 	    ])
 	my_module.add_exclude_file([
 	    'debug.hpp',
-	    'tools.hpp',
 	    ])
 	my_module.add_file_patterns([
 	    '*.hpp',
