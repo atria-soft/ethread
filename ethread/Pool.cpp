@@ -99,6 +99,7 @@ void ethread::Pool::stop() {
 			continue;
 		}
 		(*it)->stop();
+		++it;
 	}
 }
 

@@ -21,7 +21,7 @@ ethread::PoolExecutor::PoolExecutor(ethread::Pool& _pool):
 }
 
 void ethread::PoolExecutor::threadCallback() {
-	ETHREAD_DEBUG("RUN: thread in Pool [START]");
+	ETHREAD_INFO("[" << m_uniqueId << "] RUN: thread in Pool [START]");
 	ethread::setName("pool " + etk::to_string(m_uniqueId));
 	// get datas:
 	while (m_running == true) {
@@ -37,11 +37,11 @@ void ethread::PoolExecutor::threadCallback() {
 		m_action.reset();
 	}
 	m_running = false;
-	ETHREAD_DEBUG("RUN: thread in Pool [STOP]");
+	ETHREAD_INFO("[" << m_uniqueId << "] RUN: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::start() {
-	ETHREAD_DEBUG("START: thread in Pool [START]");
+	ETHREAD_INFO("START: thread in Pool [START]");
 	m_running = true;
 	m_thread = ememory::makeShared<std::thread>([&](void *){ this->threadCallback();}, nullptr);
 	if (m_thread == nullptr) {
@@ -50,23 +50,23 @@ void ethread::PoolExecutor::start() {
 		return;
 	}
 	//ethread::setPriority(*m_receiveThread, -6);
-	ETHREAD_DEBUG("START: thread in Pool [STOP]");
+	ETHREAD_INFO("START: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::stop() {
-	ETHREAD_DEBUG("STOP: thread in Pool [START]");
+	ETHREAD_INFO("[" << m_uniqueId << "] STOP: thread in Pool [START]");
 	m_running = false;
-	ETHREAD_DEBUG("STOP: thread in Pool [STOP]");
+	ETHREAD_INFO("[" << m_uniqueId << "] STOP: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::join() {
-	ETHREAD_DEBUG("JOIN: thread in Pool [START]");
+	ETHREAD_INFO("[" << m_uniqueId << "] JOIN: thread in Pool [START]");
 	if (m_thread != nullptr) {
-		ETHREAD_DEBUG("JOIN: waiting ...");
+		ETHREAD_INFO("[" << m_uniqueId << "] JOIN: waiting ...");
 		m_thread->join();
 		m_thread.reset();
 	}
-	ETHREAD_DEBUG("JOIN: thread in Pool [STOP]");
+	ETHREAD_INFO("[" << m_uniqueId << "] JOIN: thread in Pool [STOP]");
 }
 
 
