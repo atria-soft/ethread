@@ -46,6 +46,7 @@ void ethread::Pool::releaseId(uint64_t _id) {
 	if (_id == 0) {
 		return;
 	}
+	std::unique_lock<std::mutex> lock(m_mutex);
 	auto it = m_listIdPool.begin();
 	while (it != m_listIdPool.end()) {
 		if (*it == _id) {
