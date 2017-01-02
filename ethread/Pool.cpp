@@ -39,6 +39,15 @@ ethread::Future ethread::Pool::async(std::function<void()> _call, uint64_t _exec
 	ememory::SharedPtr<ethread::Promise> promise = ememory::makeShared<ethread::Promise>();
 	ememory::SharedPtr<ethread::PoolAction> action = ememory::makeShared<ethread::PoolAction>(_executionInGroupId, promise, _call);
 	m_listActions.push_back(action);
+	for(auto &it : m_listThread) {
+		if (it == nullptr) {
+			continue;
+		}
+		if (it->touch() == true) {
+			// Find one to force action now ...
+			break;
+		}
+	}
 	return ethread::Future(promise);
 }
 
@@ -106,15 +115,16 @@ void ethread::Pool::stop() {
 
 void ethread::Pool::join() {
 	std::unique_lock<std::mutex> lock(m_mutex);
-	ETHREAD_INFO("start join all the threads in pool " << m_listThread.size());
+	ETHREAD_DEBUG("start join all the threads in pool " << m_listThread.size());
 	for (size_t iii=0; iii<m_listThread.size(); ++iii) {
-		ETHREAD_INFO("    join " << iii);
+		ETHREAD_DEBUG("    join " << iii);
 		if (m_listThread[iii] == nullptr) {
 			continue;
 		}
 		m_listThread[iii]->join();
 	}
-	ETHREAD_INFO("    ==> all joined");
+	ETHREAD_DEBUG("    ==> all joined");
 	m_listThread.clear();
-	ETHREAD_INFO("    ==> all reset");
+	ETHREAD_DEBUG("    ==> all reset");
 }
+

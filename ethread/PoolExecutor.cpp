@@ -13,23 +13,34 @@
 #include "debug.hpp"
 
 ethread::PoolExecutor::PoolExecutor(ethread::Pool& _pool):
+  m_needProcess(false),
+  m_isWaiting(false),
   m_pool(_pool),
-  m_running(false),
-  m_uniqueId(0) {
-	static uint32_t uid = 10;
-	m_uniqueId = uid++;
+  m_running(false) {
+	
 }
 
 void ethread::PoolExecutor::threadCallback() {
-	ETHREAD_INFO("[" << m_uniqueId << "] RUN: thread in Pool [START]");
-	ethread::setName("pool " + etk::to_string(m_uniqueId));
+	ETHREAD_DEBUG("RUN: thread in Pool [START]");
+	ethread::setName("pool " + etk::to_string(ethread::getId()));
 	// get datas:
 	while (m_running == true) {
 		// get an action:
 		m_action = m_pool.getAction();
 		if (m_action == nullptr) {
-			// TODO : This is really bad ==> fast to code and debug but not optimum at all ... use condition instead ...
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			std::unique_lock<std::mutex> lock(m_mutex);
+			// If no action availlable and not requested to check, just sleep ...
+			if (m_needProcess == false) {
+				m_isWaiting = true;
+				ETHREAD_VERBOSE("RUN: Jump in sleep");
+				if (m_condition.wait_for(lock, std::chrono::seconds(60)) == std::cv_status::timeout) {
+					ETHREAD_VERBOSE("RUN: time-out");
+					continue;
+				}
+				ETHREAD_VERBOSE("RUN: WakeUp");
+				m_isWaiting = false;
+				m_needProcess = false;
+			}
 			continue;
 		}
 		m_action->call();
@@ -37,12 +48,16 @@ void ethread::PoolExecutor::threadCallback() {
 		m_action.reset();
 	}
 	m_running = false;
-	ETHREAD_INFO("[" << m_uniqueId << "] RUN: thread in Pool [STOP]");
+	ETHREAD_DEBUG("RUN: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::start() {
-	ETHREAD_INFO("START: thread in Pool [START]");
+	ETHREAD_DEBUG("START: thread in Pool [START]");
 	m_running = true;
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_condition.notify_all();
+	}
 	m_thread = ememory::makeShared<std::thread>([&](void *){ this->threadCallback();}, nullptr);
 	if (m_thread == nullptr) {
 		m_running = false;
@@ -50,24 +65,47 @@ void ethread::PoolExecutor::start() {
 		return;
 	}
 	//ethread::setPriority(*m_receiveThread, -6);
-	ETHREAD_INFO("START: thread in Pool [STOP]");
+	ETHREAD_DEBUG("START: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::stop() {
-	ETHREAD_INFO("[" << m_uniqueId << "] STOP: thread in Pool [START]");
+	ETHREAD_DEBUG("STOP: thread in Pool [START]");
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_condition.notify_all();
+	}
 	m_running = false;
-	ETHREAD_INFO("[" << m_uniqueId << "] STOP: thread in Pool [STOP]");
+	ETHREAD_DEBUG("STOP: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::join() {
-	ETHREAD_INFO("[" << m_uniqueId << "] JOIN: thread in Pool [START]");
+	ETHREAD_DEBUG("JOIN: thread in Pool [START]");
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_condition.notify_all();
+	}
 	if (m_thread != nullptr) {
-		ETHREAD_INFO("[" << m_uniqueId << "] JOIN: waiting ...");
+		ETHREAD_DEBUG("JOIN: waiting ...");
 		m_thread->join();
 		m_thread.reset();
 	}
-	ETHREAD_INFO("[" << m_uniqueId << "] JOIN: thread in Pool [STOP]");
+	ETHREAD_DEBUG("JOIN: thread in Pool [STOP]");
 }
+
+bool ethread::PoolExecutor::touch() {
+	std::unique_lock<std::mutex> lock(m_mutex);
+	bool ret = false;
+	if (    m_needProcess == false
+	     && m_isWaiting == true) {
+		ETHREAD_VERBOSE("Touch ...");
+		m_needProcess = true;
+		ret = true;
+		m_condition.notify_all();
+	}
+	return ret;
+}
+
+
 
 
 

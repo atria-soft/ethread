@@ -11,20 +11,52 @@
 #include <ethread/Future.hpp>
 #include <ethread/PoolAction.hpp>
 #include <ethread/Pool.hpp>
+#include <mutex>
+#include <condition_variable>
 
 namespace ethread {
+	/**
+	 * @brief A pool Executor is a class that execute some PoolAction. it is contituated wit a simple thread that execute some code).
+	 */
 	class PoolExecutor {
+		private: //section to permit to optimize CPU:
+			std::mutex m_mutex; //!< protection of the internal data.
+			std::condition_variable m_condition; //!< Message system to send event on an other thread.
+			bool m_needProcess; //!< Need to do action (no need to wait condition).
+			bool m_isWaiting; //!< The executor is waiting to some action to do.
 		private:
-			ethread::Pool& m_pool;
-			ememory::SharedPtr<std::thread> m_thread;
-			bool m_running;
-			uint32_t m_uniqueId;
-			ememory::SharedPtr<ethread::PoolAction> m_action;
+			ethread::Pool& m_pool; //!< Local reference on the Thread pool that store action to do.
+			ememory::SharedPtr<std::thread> m_thread; //!< Local thread to process action.
+			bool m_running; //!< Thread is running (not stop).
+			ememory::SharedPtr<ethread::PoolAction> m_action; //!< Curent action that is processing.
 		public:
+			/**
+			 * @brief Create a thread executor for the specific pool.
+			 * @param[in] _pool Reference on the thread pool.
+			 */
 			PoolExecutor(ethread::Pool& _pool);
+		protected:
+			/**
+			 * @brief Internal thread callback (for std::thread).
+			 */
 			void threadCallback();
+		public:
+			/**
+			 * @brief Start the current thread.
+			 */
 			void start();
+			/**
+			 * @brief Stop the current thread.
+			 */
 			void stop();
+			/**
+			 * @brief Join the current thread.
+			 */
 			void join();
+			/**
+			 * @brief Touche the execurot to process some other data.
+			 * @return true if the executor is waiting to process something. false otherwise.
+			 */
+			bool touch();
 	};
 }
