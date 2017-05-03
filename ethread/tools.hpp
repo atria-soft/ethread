@@ -69,4 +69,21 @@ namespace ethread {
 	 * @return current priority of the thread
 	 */
 	int32_t getPriority(std::thread& _thread);
+	/**
+	 * @brief Set an information with a key on the current thread
+	 * @param[in] _key key to store the value
+	 * @param[in] _value Value to store
+	 */
+	void metadataSet(const std::string& _key, uint64_t _value);
+	/**
+	 * @brief Remove the information with a key on the current thread
+	 * @param[in] _key key to remove
+	 */
+	void metadataRemove(const std::string& _key);
+	/**
+	 * @brief get the information with a key on the current thread
+	 * @param[in] _key key to store the value
+	 * @return the uint 64 value to stored
+	 */
+	uint64_t metadataGetU64(const std::string& _key);
 }

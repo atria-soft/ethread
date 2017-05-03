@@ -182,3 +182,15 @@ int32_t ethread::getPriority(std::thread& _thread) {
 		return 20;
 	#endif
 }
+
+void ethread::metadataSet(const std::string& _key, uint64_t _value) {
+	
+}
+
+void ethread::metadataRemove(const std::string& _key) {
+	
+}
+
+uint64_t ethread::metadataGetU64(const std::string& _key) {
+	return 0;
+}
