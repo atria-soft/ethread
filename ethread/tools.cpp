@@ -183,14 +183,48 @@ int32_t ethread::getPriority(std::thread& _thread) {
 	#endif
 }
 
+static std::mutex g_localMutex;
+static std::map<uint32_t, std::map<std::string, uint64_t>> g_listMetaData;
+
 void ethread::metadataSet(const std::string& _key, uint64_t _value) {
-	
+	uint32_t currentThreadId = ethread::getId();
+	std::unique_lock<std::mutex> lock(g_localMutex);
+	auto it = g_listMetaData.find(currentThreadId);
+	if (it != g_listMetaData.end()) {
+		auto it2 = it->second.find(_key);
+		if (it2 != it->second.end()) {
+			it2->second = _value;
+		} else {
+			it->second.insert(std::make_pair( _key, _value));
+		}
+	} else {
+		std::map<std::string, uint64_t> tmp;
+		tmp.insert(std::make_pair( _key, _value));
+		g_listMetaData.insert(std::make_pair(currentThreadId, tmp));
+	}
 }
 
 void ethread::metadataRemove(const std::string& _key) {
-	
+	uint32_t currentThreadId = ethread::getId();
+	std::unique_lock<std::mutex> lock(g_localMutex);
+	auto it = g_listMetaData.find(currentThreadId);
+	if (it != g_listMetaData.end()) {
+		auto it2 = it->second.find(_key);
+		if (it2 != it->second.end()) {
+			it->second.erase(it2);
+		}
+	}
 }
 
 uint64_t ethread::metadataGetU64(const std::string& _key) {
+	uint32_t currentThreadId = ethread::getId();
+	std::unique_lock<std::mutex> lock(g_localMutex);
+	auto it = g_listMetaData.find(currentThreadId);
+	if (it != g_listMetaData.end()) {
+		auto it2 = it->second.find(_key);
+		if (it2 != it->second.end()) {
+			return it2->second;
+		}
+	}
 	return 0;
 }
