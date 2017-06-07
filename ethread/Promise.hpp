@@ -7,6 +7,7 @@
 
 #include <mutex>
 #include <thread>
+#include <functional>
 #include <echrono/Duration.hpp>
 
 namespace ethread {
