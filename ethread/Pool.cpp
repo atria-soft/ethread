@@ -15,7 +15,7 @@ ethread::Pool::Pool(uint16_t _numberOfThread):
 		ememory::SharedPtr<ethread::PoolExecutor> tmp = ememory::makeShared<ethread::PoolExecutor>(*this);
 		if (tmp != nullptr) {
 			tmp->start();
-			m_listThread.push_back(tmp);
+			m_listThread.pushBack(tmp);
 		}
 	}
 }
@@ -38,7 +38,7 @@ ethread::Future ethread::Pool::async(std::function<void()> _call, uint64_t _exec
 	}
 	ememory::SharedPtr<ethread::Promise> promise = ememory::makeShared<ethread::Promise>();
 	ememory::SharedPtr<ethread::PoolAction> action = ememory::makeShared<ethread::PoolAction>(_executionInGroupId, promise, _call);
-	m_listActions.push_back(action);
+	m_listActions.pushBack(action);
 	for(auto &it : m_listThread) {
 		if (it == nullptr) {
 			continue;
@@ -89,7 +89,7 @@ ememory::SharedPtr<ethread::PoolAction> ethread::Pool::getAction() {
 		if (alreadyUsed == false) {
 			ememory::SharedPtr<ethread::PoolAction> out = (*it);
 			if (uniquId != 0) {
-				m_listIdPool.push_back(uniquId);
+				m_listIdPool.pushBack(uniquId);
 			}
 			it = m_listActions.erase(it);
 			return out;

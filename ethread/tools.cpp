@@ -5,12 +5,13 @@
  */
 
 #include <ethread/tools.hpp>
+#include <etk/Pair.hpp>
 #include <mutex>
-#include <map>
+#include <etk/Map.hpp>
 
 static std::mutex g_lock;
-static std::map<uint32_t, std::string>& getThreadList() {
-	static std::map<uint32_t, std::string> g_val;
+static etk::Map<uint32_t, etk::String>& getThreadList() {
+	static etk::Map<uint32_t, etk::String> g_val;
 	return g_val;
 }
 
@@ -18,45 +19,40 @@ static uint32_t getThreadHumanId(std::thread::id _id) {
 	uint32_t out = 0;
 	uint64_t iddd = std::hash<std::thread::id>()(_id);
 	g_lock.lock();
-	static std::map<uint64_t, uint32_t> g_list;
-	std::map<uint64_t, uint32_t>::iterator it = g_list.find(iddd);
+	static etk::Map<uint64_t, uint32_t> g_list;
+	etk::Map<uint64_t, uint32_t>::Iterator it = g_list.find(iddd);
 	if (it == g_list.end()) {
 		// attribute new ID :
 		static uint32_t tmpId = 0;
-		g_list.insert(std::pair<uint64_t, uint32_t>(iddd,tmpId));
+		g_list.set(iddd,tmpId);
 		out = tmpId;
 		tmpId++;
 	} else {
-		out = it->second;
+		out = it.getValue();
 	}
 	g_lock.unlock();
 	return out;
 	
 }
 
-static std::string getThreadName(std::thread::id _id) {
-	std::map<uint32_t,std::string>& list = getThreadList();
+static etk::String getThreadName(std::thread::id _id) {
+	etk::Map<uint32_t,etk::String>& list = getThreadList();
 	uint32_t threadID = getThreadHumanId(_id);
-	std::string out;
+	etk::String out;
 	g_lock.lock();
-	std::map<uint32_t,std::string>::iterator it = list.find(threadID);
+	auto it = list.find(threadID);
 	if (it != list.end()) {
-		out = it->second;
+		out = it.getValue();
 	}
 	g_lock.unlock();
 	return out;
 }
 
-static void setThreadName(std::thread* _thread, const std::string& _name) {
-	std::map<uint32_t,std::string>& list = getThreadList();
+static void setThreadName(std::thread* _thread, const etk::String& _name) {
+	etk::Map<uint32_t,etk::String>& list = getThreadList();
 	uint32_t threadID = ethread::getId();
 	g_lock.lock();
-	std::map<uint32_t,std::string>::iterator it = list.find(threadID);
-	if (it == list.end()) {
-		list.insert(std::pair<uint32_t, std::string>(threadID, _name));
-	} else {
-		it->second = _name;
-	}
+	list.set(threadID, _name);
 	g_lock.unlock();
 	// try now to set the thread name with Pthread
 	#if     defined(__TARGET_OS__Linux) \
@@ -67,7 +63,7 @@ static void setThreadName(std::thread* _thread, const std::string& _name) {
 		} else {
 			pthreadID = (pthread_t) _thread->native_handle();
 		}
-		std::string name = _name;
+		etk::String name = _name;
 		if (name.size() > 15) {
 			name.resize(15);
 		}
@@ -87,19 +83,19 @@ uint32_t ethread::getId(std::thread& _thread) {
 	return getThreadHumanId(_thread.get_id());
 }
 
-void ethread::setName(const std::string& _name) {
+void ethread::setName(const etk::String& _name) {
 	setThreadName(nullptr, _name);
 }
 
-void ethread::setName(std::thread& _thread, const std::string& _name) {
+void ethread::setName(std::thread& _thread, const etk::String& _name) {
 	setThreadName(&_thread, _name);
 }
 
-std::string ethread::getName() {
+etk::String ethread::getName() {
 	return getThreadName(std::this_thread::get_id());
 }
 
-std::string ethread::getName(std::thread& _thread) {
+etk::String ethread::getName(std::thread& _thread) {
 	return getThreadName(_thread.get_id());
 }
 
@@ -184,46 +180,41 @@ int32_t ethread::getPriority(std::thread& _thread) {
 }
 
 static std::mutex g_localMutex;
-static std::map<uint32_t, std::map<std::string, uint64_t>> g_listMetaData;
+static etk::Map<uint32_t, etk::Map<etk::String, uint64_t>> g_listMetaData;
 
-void ethread::metadataSet(const std::string& _key, uint64_t _value) {
+void ethread::metadataSet(const etk::String& _key, uint64_t _value) {
 	uint32_t currentThreadId = ethread::getId();
 	std::unique_lock<std::mutex> lock(g_localMutex);
 	auto it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
-		auto it2 = it->second.find(_key);
-		if (it2 != it->second.end()) {
-			it2->second = _value;
-		} else {
-			it->second.insert(std::make_pair( _key, _value));
-		}
+		it.getValue().set(_key, _value);
 	} else {
-		std::map<std::string, uint64_t> tmp;
-		tmp.insert(std::make_pair( _key, _value));
-		g_listMetaData.insert(std::make_pair(currentThreadId, tmp));
+		etk::Map<etk::String, uint64_t> tmp;
+		tmp.set(_key, _value);
+		g_listMetaData.set(currentThreadId, tmp);
 	}
 }
 
-void ethread::metadataRemove(const std::string& _key) {
+void ethread::metadataRemove(const etk::String& _key) {
 	uint32_t currentThreadId = ethread::getId();
 	std::unique_lock<std::mutex> lock(g_localMutex);
-	auto it = g_listMetaData.find(currentThreadId);
+	etk::Map<uint32_t, etk::Map<etk::String, uint64_t>>::Iterator it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
-		auto it2 = it->second.find(_key);
-		if (it2 != it->second.end()) {
-			it->second.erase(it2);
+		auto it2 = it.getValue().find(_key);
+		if (it2 != it.getValue().end()) {
+			it.getValue().erase(it2);
 		}
 	}
 }
 
-uint64_t ethread::metadataGetU64(const std::string& _key) {
+uint64_t ethread::metadataGetU64(const etk::String& _key) {
 	uint32_t currentThreadId = ethread::getId();
 	std::unique_lock<std::mutex> lock(g_localMutex);
 	auto it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
-		auto it2 = it->second.find(_key);
-		if (it2 != it->second.end()) {
-			return it2->second;
+		auto it2 = it.getValue().find(_key);
+		if (it2 != it.getValue().end()) {
+			return it2.getValue();
 		}
 	}
 	return 0;

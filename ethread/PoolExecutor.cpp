@@ -5,7 +5,7 @@
  */
 
 #include <mutex>
-#include <vector>
+#include <etk/Vector.hpp>
 #include <thread>
 #include <ethread/Future.hpp>
 #include <ethread/PoolExecutor.hpp>
@@ -22,7 +22,7 @@ ethread::PoolExecutor::PoolExecutor(ethread::Pool& _pool):
 
 void ethread::PoolExecutor::threadCallback() {
 	ETHREAD_DEBUG("RUN: thread in Pool [START]");
-	ethread::setName("pool " + etk::to_string(ethread::getId()));
+	ethread::setName("pool " + etk::toString(ethread::getId()));
 	// get datas:
 	while (m_running == true) {
 		// get an action:

@@ -6,7 +6,7 @@
 #pragma once
 
 #include <mutex>
-#include <vector>
+#include <etk/Vector.hpp>
 #include <thread>
 #include <ethread/Future.hpp>
 #include <ethread/PoolAction.hpp>

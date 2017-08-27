@@ -50,6 +50,7 @@ def configure(target, my_module):
 	my_module.add_depend([
 	    'cxx',
 	    'elog',
+	    'etk',
 	    'ethread-tools',
 	    'echrono',
 	    'ememory'

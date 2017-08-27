@@ -10,7 +10,7 @@
 ethread::PoolAction::PoolAction(uint64_t _currentPoolId, ememory::SharedPtr<ethread::Promise> _promise, std::function<void()> _call) :
   m_currentPoolId(_currentPoolId),
   m_promise(_promise),
-  m_call(std::move(_call)) {
+  m_call(etk::move(_call)) {
 	
 }
 

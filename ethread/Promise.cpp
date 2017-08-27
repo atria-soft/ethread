@@ -29,7 +29,7 @@ void ethread::Promise::finish() {
 		m_isFinished = true;
 		if (m_callback != nullptr) {
 			// call callbacks ...
-			callback = std::move(m_callback);
+			callback = etk::move(m_callback);
 		}
 	}
 	if (callback != nullptr) {
@@ -59,7 +59,7 @@ bool ethread::Promise::wait(echrono::Duration _delay) {
 
 void ethread::Promise::andThen(std::function<void()> _action) {
 	std::unique_lock<std::mutex> lock(m_mutex);
-	m_callback = std::move(_action);
+	m_callback = etk::move(_action);
 	if (m_isFinished == true) {
 		m_callback();
 	}

@@ -6,7 +6,7 @@
 #pragma once
 
 #include <mutex>
-#include <vector>
+#include <etk/Vector.hpp>
 #include <thread>
 #include <ethread/Future.hpp>
 #include <ethread/PoolAction.hpp>
@@ -19,9 +19,9 @@ namespace ethread {
 	class Pool {
 		private:
 			std::mutex m_mutex; //!< global add and release some thread
-			std::vector<ememory::SharedPtr<ethread::PoolExecutor>> m_listThread; //!< Thread pool
-			std::vector<ememory::SharedPtr<ethread::PoolAction>> m_listActions; //!< Thread pool
-			std::vector<uint64_t> m_listIdPool; //!< Thread pool
+			etk::Vector<ememory::SharedPtr<ethread::PoolExecutor>> m_listThread; //!< Thread pool
+			etk::Vector<ememory::SharedPtr<ethread::PoolAction>> m_listActions; //!< Thread pool
+			etk::Vector<uint64_t> m_listIdPool; //!< Thread pool
 			uint32_t m_lastTrandId; //!< to group the action in a single thread
 		public:
 			/**
