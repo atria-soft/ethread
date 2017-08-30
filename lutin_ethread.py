@@ -42,13 +42,29 @@ def configure(target, my_module):
 	    'ethread/Pool.hpp',
 	    'ethread/PoolAction.hpp',
 	    'ethread/PoolExecutor.hpp',
+	    'ethread/Mutex.hpp',
+	    'ethread/Semaphore.hpp',
+	    'ethread/Thread.hpp',
 	    ])
 	
+	if "Windows" in target.get_type():
+		my_module.add_src_file([
+		    'ethread/Mutex.Windows.cpp',
+		    'ethread/Semaphore.Windows.cpp',
+		    'ethread/Thread.Windows.cpp',
+		    ])
+	else:
+		my_module.add_src_file([
+		    'ethread/Mutex.pthread.cpp',
+		    'ethread/Semaphore.pthread.cpp',
+		    'ethread/Thread.pthread.cpp',
+		my_module.add_depend([
+		    'pthread',
+		    ])
 	# build in C++ mode
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:
 	my_module.add_depend([
-	    'cxx',
 	    'elog',
 	    'etk',
 	    'ethread-tools',
