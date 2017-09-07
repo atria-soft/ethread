@@ -4,9 +4,9 @@
  * @license MPL v2.0 (see license file)
  */
 #pragma once
-#include <etk/types.h>
-#include <etk/Function.h>
-#include <etk/String.h>
+#include <etk/types.hpp>
+#include <etk/Function.hpp>
+#include <etk/String.hpp>
 
 #ifdef __TARGET_OS__Windows
 	#error TODO ...
@@ -29,14 +29,13 @@ namespace ethread {
 			etk::String m_name; //!< Name of the thread (do not get it on the system ==> more portable)
 			etk::Function<void()> m_function; //!< Function to call every cycle of the thead running
 		public:
-			Thread(etk::Function<void()>&& _call, const std::string& _name);
+			Thread(etk::Function<void()>&& _call, const etk::String& _name);
 			~Thread();
 			void join();
 			bool detach();
-			void setName(const std::string& _name);
-			const std::string& setName() const;
+			void setName(const etk::String& _name);
+			const etk::String& setName() const;
 			uint32_t getIdentifier() const;
 	};
 }
 
-#endif

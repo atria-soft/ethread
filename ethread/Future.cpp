@@ -28,7 +28,7 @@ bool ethread::Future::wait(echrono::Duration _delay) {
 	return m_promise->wait(_delay);
 }
 
-void ethread::Future::andThen(std::function<void()> _action) {
+void ethread::Future::andThen(etk::Function<void()> _action) {
 	if (m_promise == nullptr) {
 		ETHREAD_ERROR("Promise does not exist...");
 		return;

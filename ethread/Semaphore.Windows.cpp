@@ -3,9 +3,9 @@
  * @copyright 2011, Edouard DUPIN, all right reserved
  * @license MPL v2.0 (see license file)
  */
-#include <etk/types.h>
-#include <etk/os/Semaphore.h>
-#include <etk/debug.h>
+#include <etk/types.hpp>
+#include <etk/os/Semaphore.hpp>
+#include <etk/debug.hpp>
 
 etk::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {
 	// create interface mutex :

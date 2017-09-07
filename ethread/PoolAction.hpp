@@ -5,9 +5,9 @@
  */
 #pragma once
 
-#include <mutex>
+#include <ethread/Mutex.hpp>
 #include <etk/Vector.hpp>
-#include <thread>
+#include <ethread/Thread.hpp>
 #include <ethread/Future.hpp>
 #include <ememory/memory.hpp>
 
@@ -19,7 +19,7 @@ namespace ethread {
 		private:
 			uint64_t m_currentPoolId; //!< execution group Id requested
 			ememory::SharedPtr<ethread::Promise> m_promise; //!< Return promise of the action
-			std::function<void()> m_call; //!< Action to do ...
+			etk::Function<void()> m_call; //!< Action to do ...
 		public:
 			/**
 			 * @brief Contuctor of a simple action
@@ -27,7 +27,7 @@ namespace ethread {
 			 * @param[in] _promise Promise to call when action is done
 			 * @param[in] _call Action to do (callable object)
 			 */
-			PoolAction(uint64_t _currentPoolId, ememory::SharedPtr<ethread::Promise> _promise, std::function<void()> _call);
+			PoolAction(uint64_t _currentPoolId, ememory::SharedPtr<ethread::Promise> _promise, etk::Function<void()> _call);
 			/**
 			 * @brief Get the Pool id of the Action
 			 * @return The pool id of this action (0 for no request)

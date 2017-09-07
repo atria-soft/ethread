@@ -5,8 +5,8 @@
  */
 #pragma once
 
-#include <mutex>
-#include <thread>
+#include <ethread/Mutex.hpp>
+#include <ethread/Thread.hpp>
 #include <functional>
 #include <echrono/Duration.hpp>
 
@@ -16,8 +16,8 @@ namespace ethread {
 	 */
 	class Promise {
 		private:
-			std::mutex m_mutex; //!< Simple lock of the interface
-			std::function<void()> m_callback; //!< callback to call when processing is ended
+			ethread::Mutex m_mutex; //!< Simple lock of the interface
+			etk::Function<void()> m_callback; //!< callback to call when processing is ended
 			bool m_isFinished; //!< The process of the action has been done
 		public:
 			/**
@@ -43,6 +43,6 @@ namespace ethread {
 			 * @brief Action to do when the action is finished
 			 * @param[in] _action New action to do.
 			 */
-			void andThen(std::function<void()> _action);
+			void andThen(etk::Function<void()> _action);
 	};
 }

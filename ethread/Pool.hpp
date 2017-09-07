@@ -5,9 +5,9 @@
  */
 #pragma once
 
-#include <mutex>
+#include <ethread/Mutex.hpp>
 #include <etk/Vector.hpp>
-#include <thread>
+#include <ethread/Thread.hpp>
 #include <ethread/Future.hpp>
 #include <ethread/PoolAction.hpp>
 
@@ -18,7 +18,7 @@ namespace ethread {
 	 */
 	class Pool {
 		private:
-			std::mutex m_mutex; //!< global add and release some thread
+			ethread::Mutex m_mutex; //!< global add and release some thread
 			etk::Vector<ememory::SharedPtr<ethread::PoolExecutor>> m_listThread; //!< Thread pool
 			etk::Vector<ememory::SharedPtr<ethread::PoolAction>> m_listActions; //!< Thread pool
 			etk::Vector<uint64_t> m_listIdPool; //!< Thread pool
@@ -45,7 +45,7 @@ namespace ethread {
 			 * @return A future on the action done
 			 */
 			// Execte in a group != of 0 request ordering the action in a single thread (same as a trand ...)
-			ethread::Future async(std::function<void()> _func, uint64_t _executionInGroupId=0); //!< execute an action in the thread pool...
+			ethread::Future async(etk::Function<void()> _func, uint64_t _executionInGroupId=0); //!< execute an action in the thread pool...
 		// internal:
 			/**
 			 * @brief Gan an Action to process

@@ -5,13 +5,13 @@
  */
 #pragma once
 
-#include <mutex>
+#include <ethread/Mutex.hpp>
 #include <etk/Vector.hpp>
-#include <thread>
+#include <ethread/Thread.hpp>
 #include <ethread/Future.hpp>
 #include <ethread/PoolAction.hpp>
 #include <ethread/Pool.hpp>
-#include <mutex>
+#include <ethread/Mutex.hpp>
 #include <condition_variable>
 
 namespace ethread {
@@ -20,13 +20,13 @@ namespace ethread {
 	 */
 	class PoolExecutor {
 		private: //section to permit to optimize CPU:
-			std::mutex m_mutex; //!< protection of the internal data.
+			ethread::Mutex m_mutex; //!< protection of the internal data.
 			std::condition_variable m_condition; //!< Message system to send event on an other thread.
 			bool m_needProcess; //!< Need to do action (no need to wait condition).
 			bool m_isWaiting; //!< The executor is waiting to some action to do.
 		private:
 			ethread::Pool& m_pool; //!< Local reference on the Thread pool that store action to do.
-			ememory::SharedPtr<std::thread> m_thread; //!< Local thread to process action.
+			ememory::SharedPtr<ethread::Thread> m_thread; //!< Local thread to process action.
 			bool m_running; //!< Thread is running (not stop).
 			ememory::SharedPtr<ethread::PoolAction> m_action; //!< Curent action that is processing.
 		public:
@@ -37,7 +37,7 @@ namespace ethread {
 			PoolExecutor(ethread::Pool& _pool);
 		protected:
 			/**
-			 * @brief Internal thread callback (for std::thread).
+			 * @brief Internal thread callback (for ethread::Thread).
 			 */
 			void threadCallback();
 		public:

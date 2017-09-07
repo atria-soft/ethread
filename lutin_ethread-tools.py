@@ -33,13 +33,28 @@ def configure(target, my_module):
 	
 	my_module.add_header_file([
 	    'ethread/tools.hpp',
+	    'ethread/Thread.hpp',
+	    'ethread/Mutex.hpp',
+	    'ethread/Semaphore.hpp',
 	    ])
 	
+	if "Windows" in target.get_type():
+		my_module.add_src_file([
+		    'ethread/Mutex.Windows.cpp',
+		    'ethread/Thread.Windows.cpp',
+		    ])
+	else:
+		my_module.add_src_file([
+		    'ethread/Mutex.pthread.cpp',
+		    'ethread/Thread.pthread.cpp',
+		    ])
+		my_module.add_depend([
+		    'pthread',
+		    ])
 	# build in C++ mode
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:
 	my_module.add_depend([
-	    'cxx',
 	    'etk-base',
 	    ])
 	#pthread is not availlable on Windows

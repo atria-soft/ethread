@@ -5,8 +5,8 @@
  */
 #pragma once
 
-#include <mutex>
-#include <thread>
+#include <ethread/Mutex.hpp>
+#include <ethread/Thread.hpp>
 #include <ethread/Promise.hpp>
 #include <ememory/memory.hpp>
 
@@ -38,6 +38,6 @@ namespace ethread {
 			 * @brief Action to do when the action is finished
 			 * @param[in] _action New action to do.
 			 */
-			void andThen(std::function<void()> _action);
+			void andThen(etk::Function<void()> _action);
 	};
 }

@@ -10,7 +10,7 @@
 
 ethread::Pool::Pool(uint16_t _numberOfThread):
   m_lastTrandId(1) {
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	for (uint32_t iii=0; iii<_numberOfThread; ++iii) {
 		ememory::SharedPtr<ethread::PoolExecutor> tmp = ememory::makeShared<ethread::PoolExecutor>(*this);
 		if (tmp != nullptr) {
@@ -26,12 +26,12 @@ ethread::Pool::~Pool() {
 }
 
 uint32_t ethread::Pool::createGroupId() {
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	return m_lastTrandId++;
 }
 
-ethread::Future ethread::Pool::async(std::function<void()> _call, uint64_t _executionInGroupId) {
-	std::unique_lock<std::mutex> lock(m_mutex);
+ethread::Future ethread::Pool::async(etk::Function<void()> _call, uint64_t _executionInGroupId) {
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	if (_call == nullptr) {
 		ETHREAD_ERROR("Can not add an action with no function to call...");
 		return ethread::Future();
@@ -55,7 +55,7 @@ void ethread::Pool::releaseId(uint64_t _id) {
 	if (_id == 0) {
 		return;
 	}
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	auto it = m_listIdPool.begin();
 	while (it != m_listIdPool.end()) {
 		if (*it == _id) {
@@ -68,7 +68,7 @@ void ethread::Pool::releaseId(uint64_t _id) {
 
 // get an action to execute ...
 ememory::SharedPtr<ethread::PoolAction> ethread::Pool::getAction() {
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	auto it = m_listActions.begin();
 	while (it != m_listActions.end()) {
 		if (*it == nullptr) {
@@ -101,7 +101,7 @@ ememory::SharedPtr<ethread::PoolAction> ethread::Pool::getAction() {
 
 
 void ethread::Pool::stop() {
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	auto it = m_listThread.begin();
 	while (it != m_listThread.end()) {
 		if (*it == nullptr) {
@@ -114,7 +114,7 @@ void ethread::Pool::stop() {
 }
 
 void ethread::Pool::join() {
-	std::unique_lock<std::mutex> lock(m_mutex);
+	std::unique_lock<ethread::Mutex> lock(m_mutex);
 	ETHREAD_DEBUG("start join all the threads in pool " << m_listThread.size());
 	for (size_t iii=0; iii<m_listThread.size(); ++iii) {
 		ETHREAD_DEBUG("    join " << iii);

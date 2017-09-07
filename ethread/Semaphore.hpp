@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include <etk/types.h>
+#include <etk/types.hpp>
 
 #ifdef __TARGET_OS__Windows
 	#include <windows.h>
@@ -60,6 +60,4 @@ namespace ethread {
 			 */
 			bool wait(uint64_t _timeOutInUs);
 	};
-};
-
-#endif
+}

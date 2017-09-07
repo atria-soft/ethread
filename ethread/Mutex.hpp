@@ -4,7 +4,7 @@
  * @license MPL v2.0 (see license file)
  */
 #pragma once
-#include <etk/types.h>
+#include <etk/types.hpp>
 
 #ifdef __TARGET_OS__Windows
 	#include <windows.h>
@@ -50,7 +50,7 @@ namespace ethread {
 	/**
 	 * @brief AutoLock and un-lock when exit fuction.
 	 */
-	class uniqueLock {
+	class UniqueLock {
 		private:
 			// Keep a reference on the mutex
 			ethread::Mutex &m_protect;
@@ -59,17 +59,16 @@ namespace ethread {
 			 * @brief constructor that automaticly lock the mutex.
 			 * @param[in] _protect Mutex to Lock.
 			 */
-			uniqueLock(ethread::Mutex& _protect) :
+			UniqueLock(ethread::Mutex& _protect) :
 			  m_protect(_protect) {
 				m_protect.lock();
 			}
 			/**
 			 * @brief Destructor that Auto Unlock mutex when remove.
 			 */
-			virtual ~uniqueLock(){
+			virtual ~UniqueLock(){
 				m_protect.unLock();
 			}
 	};
-};
+}
 
-#endif

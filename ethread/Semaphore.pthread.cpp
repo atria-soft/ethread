@@ -3,9 +3,9 @@
  * @copyright 2011, Edouard DUPIN, all right reserved
  * @license MPL v2.0 (see license file)
  */
-#include <etk/types.h>
-#include <ethread/Semaphore.h>
-#include <ethread/debug.h>
+#include <etk/types.hpp>
+#include <ethread/Semaphore.hpp>
+//#include <ethread/debug.hpp>
 #include <sys/time.h>
 
 ethread::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {

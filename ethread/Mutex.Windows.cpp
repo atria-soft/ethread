@@ -5,7 +5,7 @@
  */
 
 
-#include <ethread/os/Mutex.h>
+#include <ethread/Mutex.hpp>
 
 ethread::Mutex::Mutex() {
 	InitializeCriticalSection(&m_mutex);
