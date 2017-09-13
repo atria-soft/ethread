@@ -11,7 +11,9 @@
 #ifdef __TARGET_OS__Windows
 	#error TODO ...
 #else
-	#include <pthread.h>
+	extern "C" {
+		#include <pthread.h>
+	}
 #endif
 
 namespace ethread {
@@ -23,9 +25,10 @@ namespace ethread {
 			#ifdef __TARGET_OS__Windows
 				
 			#else
-				pthread_mutex_t m_thread;
+				pthread_t m_thread;
+				static void* threadCallback(void* _userData);
 			#endif
-			uint32_t m_uid; //!< unique id of the thread
+			uint64_t m_uid; //!< unique id of the thread
 			etk::String m_name; //!< Name of the thread (do not get it on the system ==> more portable)
 			etk::Function<void()> m_function; //!< Function to call every cycle of the thead running
 		public:
@@ -33,9 +36,10 @@ namespace ethread {
 			~Thread();
 			void join();
 			bool detach();
+			void threadCall();
 			void setName(const etk::String& _name);
 			const etk::String& setName() const;
-			uint32_t getIdentifier() const;
+			uint64_t getId() const;
 	};
 }
 

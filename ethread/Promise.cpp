@@ -21,7 +21,7 @@ bool ethread::Promise::isFinished() {
 void ethread::Promise::finish() {
 	etk::Function<void()> callback;
 	{
-		std::unique_lock<ethread::Mutex> lock(m_mutex);
+		ethread::UniqueLock lock(m_mutex);
 		if (m_isFinished == true) {
 			ETHREAD_ERROR("Request 2 time finishing a Promise ...");
 			return;
@@ -41,7 +41,7 @@ bool ethread::Promise::wait(echrono::Duration _delay) {
 	echrono::Steady time = echrono::Steady::now();
 	while (_delay >= 0) {
 		{
-			std::unique_lock<ethread::Mutex> lock(m_mutex);
+			ethread::UniqueLock lock(m_mutex);
 			if (m_isFinished == true) {
 				return true;
 			}
@@ -51,14 +51,14 @@ bool ethread::Promise::wait(echrono::Duration _delay) {
 		time = time2;
 		if (_delay >= 0) {
 			// TODO : This is really bad ==> fast to code and debug but not optimum at all ... use condition instead ...
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			ethread::sleepMilliSeconds((10));
 		}
 	}
 	return false;
 }
 
 void ethread::Promise::andThen(etk::Function<void()> _action) {
-	std::unique_lock<ethread::Mutex> lock(m_mutex);
+	ethread::UniqueLock lock(m_mutex);
 	m_callback = etk::move(_action);
 	if (m_isFinished == true) {
 		m_callback();

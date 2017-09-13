@@ -9,8 +9,16 @@
 //#include <ethread/Mutex.hpp>
 // TODO: set mutex back ...
 #include <etk/Map.hpp>
-#include <unistd.h>
-
+extern "C" {
+	#include <unistd.h>
+}
+#ifdef __TARGET_OS__Windows
+	#error TODO ...
+#else
+	extern "C" {
+		#include <pthread.h>
+	}
+#endif
 //static ethread::Mutex g_lock;
 static etk::Map<uint32_t, etk::String>& getThreadList() {
 	static etk::Map<uint32_t, etk::String> g_val;
@@ -79,15 +87,18 @@ static void setThreadName(ethread::Thread* _thread, const etk::String& _name) {
 }
 */
 uint32_t ethread::getId() {
+	pthread_t self;
+	self = pthread_self();
 	/*
-	return getThreadHumanId(std::this_thread::get_id());
+	pthread_id_np_t tid;
+	pthread_getunique_np(&self, &tid);
+	return uint64_t(tid);
 	*/
-	return 0;
+	return *(uint64_t*)(self);
 }
 
 uint32_t ethread::getId(ethread::Thread& _thread) {
-	//return getThreadHumanId(_thread.get_id());
-	return 0;
+	return _thread.getId();
 }
 
 void ethread::setName(const etk::String& _name) {
@@ -210,7 +221,7 @@ static etk::Map<uint32_t, etk::Map<etk::String, uint64_t>> g_listMetaData;
 void ethread::metadataSet(const etk::String& _key, uint64_t _value) {
 	/*
 	uint32_t currentThreadId = ethread::getId();
-	// TODO: std::unique_lock<ethread::Mutex> lock(g_localMutex);
+	// TODO: ethread::UniqueLock lock(g_localMutex);
 	auto it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
 		it.getValue().set(_key, _value);
@@ -225,7 +236,7 @@ void ethread::metadataSet(const etk::String& _key, uint64_t _value) {
 void ethread::metadataRemove(const etk::String& _key) {
 	/*
 	uint32_t currentThreadId = ethread::getId();
-	// TODO: std::unique_lock<ethread::Mutex> lock(g_localMutex);
+	// TODO: ethread::UniqueLock lock(g_localMutex);
 	etk::Map<uint32_t, etk::Map<etk::String, uint64_t>>::Iterator it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
 		auto it2 = it.getValue().find(_key);
@@ -240,7 +251,7 @@ void ethread::metadataRemove(const etk::String& _key) {
 uint64_t ethread::metadataGetU64(const etk::String& _key) {
 	/*
 	uint32_t currentThreadId = ethread::getId();
-	// TODO: std::unique_lock<ethread::Mutex> lock(g_localMutex);
+	// TODO: ethread::UniqueLock lock(g_localMutex);
 	auto it = g_listMetaData.find(currentThreadId);
 	if (it != g_listMetaData.end()) {
 		auto it2 = it.getValue().find(_key);

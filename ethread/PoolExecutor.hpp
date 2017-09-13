@@ -12,7 +12,7 @@
 #include <ethread/PoolAction.hpp>
 #include <ethread/Pool.hpp>
 #include <ethread/Mutex.hpp>
-#include <condition_variable>
+#include <ethread/Semaphore.hpp>
 
 namespace ethread {
 	/**

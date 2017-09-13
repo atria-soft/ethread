@@ -28,7 +28,7 @@ void ethread::PoolExecutor::threadCallback() {
 		// get an action:
 		m_action = m_pool.getAction();
 		if (m_action == nullptr) {
-			std::unique_lock<ethread::Mutex> lock(m_mutex);
+			ethread::UniqueLock lock(m_mutex);
 			// If no action availlable and not requested to check, just sleep ...
 			if (m_needProcess == false) {
 				m_isWaiting = true;
@@ -55,7 +55,7 @@ void ethread::PoolExecutor::start() {
 	ETHREAD_DEBUG("START: thread in Pool [START]");
 	m_running = true;
 	{
-		std::unique_lock<ethread::Mutex> lock(m_mutex);
+		ethread::UniqueLock lock(m_mutex);
 		m_condition.notify_all();
 	}
 	m_thread = ememory::makeShared<ethread::Thread>([&](void *){ this->threadCallback();}, nullptr);
@@ -71,7 +71,7 @@ void ethread::PoolExecutor::start() {
 void ethread::PoolExecutor::stop() {
 	ETHREAD_DEBUG("STOP: thread in Pool [START]");
 	{
-		std::unique_lock<ethread::Mutex> lock(m_mutex);
+		ethread::UniqueLock lock(m_mutex);
 		m_condition.notify_all();
 	}
 	m_running = false;
@@ -81,7 +81,7 @@ void ethread::PoolExecutor::stop() {
 void ethread::PoolExecutor::join() {
 	ETHREAD_DEBUG("JOIN: thread in Pool [START]");
 	{
-		std::unique_lock<ethread::Mutex> lock(m_mutex);
+		ethread::UniqueLock lock(m_mutex);
 		m_condition.notify_all();
 	}
 	if (m_thread != nullptr) {
@@ -93,7 +93,7 @@ void ethread::PoolExecutor::join() {
 }
 
 bool ethread::PoolExecutor::touch() {
-	std::unique_lock<ethread::Mutex> lock(m_mutex);
+	ethread::UniqueLock lock(m_mutex);
 	bool ret = false;
 	if (    m_needProcess == false
 	     && m_isWaiting == true) {

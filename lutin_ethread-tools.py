@@ -35,17 +35,20 @@ def configure(target, my_module):
 	    'ethread/tools.hpp',
 	    'ethread/Thread.hpp',
 	    'ethread/Mutex.hpp',
+	    'ethread/MutexRecursive.hpp',
 	    'ethread/Semaphore.hpp',
 	    ])
 	
 	if "Windows" in target.get_type():
 		my_module.add_src_file([
 		    'ethread/Mutex.Windows.cpp',
+		    'ethread/MutexRecursive.Windows.cpp',
 		    'ethread/Thread.Windows.cpp',
 		    ])
 	else:
 		my_module.add_src_file([
 		    'ethread/Mutex.pthread.cpp',
+		    'ethread/MutexRecursive.pthread.cpp',
 		    'ethread/Thread.pthread.cpp',
 		    ])
 		my_module.add_depend([

@@ -7,7 +7,7 @@
 
 #include <ethread/Mutex.hpp>
 #include <ethread/Thread.hpp>
-#include <functional>
+#include <etk/Function.hpp>
 #include <echrono/Duration.hpp>
 
 namespace ethread {

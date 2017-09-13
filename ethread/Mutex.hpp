@@ -21,7 +21,7 @@ namespace ethread {
 			#ifdef __TARGET_OS__Windows
 				CRITICAL_SECTION m_mutex;
 			#else
-				pthread_mutex_t  m_mutex;
+				pthread_mutex_t m_mutex;
 			#endif
 		public:
 			/**
@@ -54,20 +54,40 @@ namespace ethread {
 		private:
 			// Keep a reference on the mutex
 			ethread::Mutex &m_protect;
+			bool m_lock;
 		public:
 			/**
 			 * @brief constructor that automaticly lock the mutex.
 			 * @param[in] _protect Mutex to Lock.
+			 * @param[in] _notLock Must be lock after by a tryLock.
 			 */
-			UniqueLock(ethread::Mutex& _protect) :
-			  m_protect(_protect) {
-				m_protect.lock();
+			UniqueLock(ethread::Mutex& _protect, bool _notLock = false) :
+			  m_protect(_protect),
+			  m_lock(false) {
+				if (_notLock == false) {
+					m_protect.lock();
+					m_lock = true;
+				}
+			}
+			/**
+			 * @brief Try to lock the mutex (exit if mutex is already locked)
+			 * @return true The mutex is locked
+			 * @return false The mutex is already locked.
+			 */
+			bool tryLock() {
+				if (m_protect.tryLock() == true) {
+					m_lock = true;
+				}
+				return m_lock;
 			}
 			/**
 			 * @brief Destructor that Auto Unlock mutex when remove.
 			 */
 			virtual ~UniqueLock(){
-				m_protect.unLock();
+				if (m_lock == true) {
+					m_protect.unLock();
+					m_lock = false;
+				}
 			}
 	};
 }
