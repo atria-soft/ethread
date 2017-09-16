@@ -38,8 +38,15 @@ namespace ethread {
 			bool detach();
 			void threadCall();
 			void setName(const etk::String& _name);
-			const etk::String& setName() const;
+			const etk::String& getName() const;
 			uint64_t getId() const;
+			#ifdef __TARGET_OS__Windows
+				
+			#else
+				pthread_t getNativeHandle() {
+					return m_thread;
+				}
+			#endif
 	};
 }
 

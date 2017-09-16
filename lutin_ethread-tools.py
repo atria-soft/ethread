@@ -44,12 +44,14 @@ def configure(target, my_module):
 		    'ethread/Mutex.Windows.cpp',
 		    'ethread/MutexRecursive.Windows.cpp',
 		    'ethread/Thread.Windows.cpp',
+		    'ethread/Semaphore.Windows.cpp',
 		    ])
 	else:
 		my_module.add_src_file([
 		    'ethread/Mutex.pthread.cpp',
 		    'ethread/MutexRecursive.pthread.cpp',
 		    'ethread/Thread.pthread.cpp',
+		    'ethread/Semaphore.pthread.cpp',
 		    ])
 		my_module.add_depend([
 		    'pthread',

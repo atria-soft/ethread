@@ -11,6 +11,8 @@
 #include <ethread/PoolExecutor.hpp>
 #include <ethread/tools.hpp>
 #include "debug.hpp"
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::PoolExecutor);
 
 ethread::PoolExecutor::PoolExecutor(ethread::Pool& _pool):
   m_needProcess(false),

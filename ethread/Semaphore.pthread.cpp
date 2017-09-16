@@ -7,17 +7,19 @@
 #include <ethread/Semaphore.hpp>
 //#include <ethread/debug.hpp>
 #include <sys/time.h>
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Semaphore);
 
 ethread::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {
 	// create interface mutex :
 	int ret = pthread_mutex_init(&m_mutex, nullptr);
-	TK_ASSERT(ret == 0, "Error creating Mutex ...");
+	//TK_ASSERT(ret == 0, "Error creating Mutex ...");
 	// create contition :
 	ret = pthread_cond_init(&m_condition, nullptr);
-	TK_ASSERT(ret == 0, "Error creating Condition ...");
+	//TK_ASSERT(ret == 0, "Error creating Condition ...");
 	if (ret != 0) {
 		ret = pthread_mutex_destroy(&m_mutex);
-		TK_ASSERT(ret == 0, "Error destroying Mutex ...");
+		//TK_ASSERT(ret == 0, "Error destroying Mutex ...");
 	}
 	m_maximum = _nbMessageMax;
 	m_data = _nbBasicElement;
@@ -27,10 +29,10 @@ ethread::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) 
 ethread::Semaphore::~Semaphore() {
 	// Remove condition
 	int ret = pthread_cond_destroy(&m_condition);
-	TK_ASSERT(ret == 0, "Error destroying Condition ...");
+	//TK_ASSERT(ret == 0, "Error destroying Condition ...");
 	// Remove Mutex
 	ret = pthread_mutex_destroy(&m_mutex);
-	TK_ASSERT(ret == 0, "Error destroying Mutex ...");
+	//TK_ASSERT(ret == 0, "Error destroying Mutex ...");
 }
 
 uint32_t ethread::Semaphore::getCount() {

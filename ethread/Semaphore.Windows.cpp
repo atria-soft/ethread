@@ -6,6 +6,8 @@
 #include <etk/types.hpp>
 #include <etk/os/Semaphore.hpp>
 #include <etk/debug.hpp>
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Semaphore);
 
 etk::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {
 	// create interface mutex :

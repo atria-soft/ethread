@@ -44,17 +44,6 @@ def configure(target, my_module):
 	    'ethread/PoolExecutor.hpp',
 	    ])
 	
-	if "Windows" in target.get_type():
-		my_module.add_src_file([
-		    'ethread/Semaphore.Windows.cpp',
-		    ])
-	else:
-		my_module.add_src_file([
-		    'ethread/Semaphore.pthread.cpp',
-		    ])
-		my_module.add_depend([
-		    'pthread',
-		    ])
 	# build in C++ mode
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:

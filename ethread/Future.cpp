@@ -7,6 +7,9 @@
 #include "debug.hpp"
 #include <ethread/Future.hpp>
 
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Future);
+
 ethread::Future::Future(ememory::SharedPtr<ethread::Promise> _promise):
   m_promise(_promise) {
 	

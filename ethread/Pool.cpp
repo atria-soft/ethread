@@ -7,6 +7,8 @@
 #include <ethread/Pool.hpp>
 #include <ethread/PoolExecutor.hpp>
 #include "debug.hpp"
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Pool);
 
 ethread::Pool::Pool(uint16_t _numberOfThread):
   m_lastTrandId(1) {

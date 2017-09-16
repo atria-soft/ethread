@@ -8,6 +8,8 @@
 #include <ethread/Future.hpp>
 #include <ethread/Promise.hpp>
 #include <echrono/Steady.hpp>
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Promise);
 
 ethread::Promise::Promise():
   m_isFinished(false) {

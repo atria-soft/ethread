@@ -6,7 +6,7 @@
 
 #include <ethread/tools.hpp>
 #include <etk/Pair.hpp>
-//#include <ethread/Mutex.hpp>
+#include <ethread/Mutex.hpp>
 // TODO: set mutex back ...
 #include <etk/Map.hpp>
 extern "C" {
@@ -19,104 +19,101 @@ extern "C" {
 		#include <pthread.h>
 	}
 #endif
-//static ethread::Mutex g_lock;
-static etk::Map<uint32_t, etk::String>& getThreadList() {
-	static etk::Map<uint32_t, etk::String> g_val;
+static ethread::Mutex g_lock;
+static etk::Map<uint64_t, etk::String>& getThreadList() {
+	static etk::Map<uint64_t, etk::String> g_val;
 	return g_val;
 }
-/*
-static uint32_t getThreadHumanId(ethread::Thread::id _id) {
-	return 0;
-	uint32_t out = 0;
-	uint64_t iddd = std::hash<ethread::Thread::id>()(_id);
-	// TODO: g_lock.lock();
-	static etk::Map<uint64_t, uint32_t> g_list;
-	etk::Map<uint64_t, uint32_t>::Iterator it = g_list.find(iddd);
-	if (it == g_list.end()) {
-		// attribute new ID :
-		static uint32_t tmpId = 0;
-		g_list.set(iddd,tmpId);
-		out = tmpId;
-		tmpId++;
-	} else {
-		out = it.getValue();
-	}
-	// TODO: g_lock.unlock();
-	return out;
-}
-
-static etk::String getThreadName(ethread::Thread::id _id) {
-	etk::Map<uint32_t,etk::String>& list = getThreadList();
-	uint32_t threadID = getThreadHumanId(_id);
-	etk::String out;
-	// TODO: g_lock.lock();
-	auto it = list.find(threadID);
-	if (it != list.end()) {
-		out = it.getValue();
-	}
-	// TODO: g_lock.unlock();
-	return out;
-	return "TODO";
-}
-
-static void setThreadName(ethread::Thread* _thread, const etk::String& _name) {
-	etk::Map<uint32_t,etk::String>& list = getThreadList();
-	uint32_t threadID = ethread::getId();
-	// TODO: g_lock.lock();
-	list.set(threadID, _name);
-	vg_lock.unlock();
-	// try now to set the thread name with Pthread
-	#if     defined(__TARGET_OS__Linux) \
-	    && !defined(__TARGET_OS__Web)
-		pthread_t pthreadID;
-		if (_thread == nullptr) {
-			pthreadID = pthread_self();
+namespace ethread {
+	// Note: Declared in Thread.cpp
+	uint32_t getThreadHumanId(uint64_t _id) {
+		uint32_t out = 0;
+		g_lock.lock();
+		static etk::Map<uint64_t, uint32_t> g_list;
+		auto it = g_list.find(_id);
+		if (it == g_list.end()) {
+			// attribute new ID :
+			static uint32_t tmpId = 0;
+			g_list.set(_id, tmpId);
+			out = tmpId;
+			tmpId++;
 		} else {
-			pthreadID = (pthread_t) _thread->native_handle();
+			out = it.getValue();
 		}
-		etk::String name = _name;
-		if (name.size() > 15) {
-			name.resize(15);
+		g_lock.unLock();
+		return out;
+	}
+
+	etk::String getThreadName(uint64_t _id) {
+		etk::Map<uint64_t,etk::String>& list = getThreadList();
+		uint32_t threadID = getThreadHumanId(_id);
+		etk::String out;
+		// TODO: g_lock.lock();
+		auto it = list.find(threadID);
+		if (it != list.end()) {
+			out = it.getValue();
 		}
-		if (pthread_setname_np(pthreadID, name.c_str()) < 0) {
-			//TODO: TK_ERROR("Error when setting the Name in the OS thread naming");
-		}
-	#else
-		//TODO: TK_INFO("Can not set the thread name in this OS (local set)");
-	#endif
+		// TODO: g_lock.unlock();
+		return out;
+	}
+	
+	void setThreadName(ethread::Thread* _thread, const etk::String& _name) {
+		etk::Map<uint64_t,etk::String>& list = getThreadList();
+		uint32_t threadID = ethread::getId();
+		// TODO: g_lock.lock();
+		list.set(threadID, _name);
+		// TODO: g_lock.unlock();
+		// try now to set the thread name with Pthread
+		#if    (    defined(__TARGET_OS__Linux) \
+		         || defined(__TARGET_OS__Android) \
+		       ) \
+		    && !defined(__TARGET_OS__Web)
+			pthread_t pthreadID;
+			if (_thread == nullptr) {
+				pthreadID = pthread_self();
+			} else {
+				pthreadID = _thread->getNativeHandle();
+			}
+			etk::String name = _name;
+			if (name.size() > 15) {
+				name.resize(15);
+			}
+			if (pthread_setname_np(pthreadID, name.c_str()) < 0) {
+				//TODO: TK_ERROR("Error when setting the Name in the OS thread naming");
+			}
+		#else
+			//TODO: TK_INFO("Can not set the thread name in this OS (local set)");
+		#endif
+	}
 }
-*/
+
+
 uint32_t ethread::getId() {
 	pthread_t self;
 	self = pthread_self();
-	/*
-	pthread_id_np_t tid;
-	pthread_getunique_np(&self, &tid);
-	return uint64_t(tid);
-	*/
-	return *(uint64_t*)(self);
+	return ethread::getThreadHumanId(uint64_t(self));
 }
 
 uint32_t ethread::getId(ethread::Thread& _thread) {
-	return _thread.getId();
+	return ethread::getThreadHumanId(_thread.getId());
 }
 
 void ethread::setName(const etk::String& _name) {
-	//setThreadName(nullptr, _name);
+	setThreadName(nullptr, _name);
 }
 
 void ethread::setName(ethread::Thread& _thread, const etk::String& _name) {
-	//setThreadName(&_thread, _name);
+	_thread.setName(_name);
 }
 
 etk::String ethread::getName() {
-	//return getThreadName(std::this_thread::get_id());
-	return "";
+	pthread_t self;
+	self = pthread_self();
+	return getThreadName(uint64_t(self));
 }
 
 etk::String ethread::getName(ethread::Thread& _thread) {
-	//return getThreadName(_thread.get_id());
-	return "";
+	return _thread.getName();
 }
 
 #if    defined(__TARGET_OS__Linux) \

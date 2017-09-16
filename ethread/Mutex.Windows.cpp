@@ -7,6 +7,10 @@
 
 #include <ethread/Mutex.hpp>
 
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::Mutex);
+ETK_DECLARE_TYPE(ethread::UniqueLock);
+
 ethread::Mutex::Mutex() {
 	InitializeCriticalSection(&m_mutex);
 }

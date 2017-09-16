@@ -6,6 +6,8 @@
 
 #include <ethread/PoolAction.hpp>
 #include "debug.hpp"
+#include <etk/typeInfo.hpp>
+ETK_DECLARE_TYPE(ethread::PoolAction);
 
 ethread::PoolAction::PoolAction(uint64_t _currentPoolId, ememory::SharedPtr<ethread::Promise> _promise, etk::Function<void()> _call) :
   m_currentPoolId(_currentPoolId),
