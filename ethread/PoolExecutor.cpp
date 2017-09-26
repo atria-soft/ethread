@@ -30,12 +30,11 @@ void ethread::PoolExecutor::threadCallback() {
 		// get an action:
 		m_action = m_pool.getAction();
 		if (m_action == nullptr) {
-			ethread::UniqueLock lock(m_mutex);
 			// If no action availlable and not requested to check, just sleep ...
 			if (m_needProcess == false) {
 				m_isWaiting = true;
 				ETHREAD_VERBOSE("RUN: Jump in sleep");
-				if (m_condition.wait_for(lock, std::chrono::seconds(60)) == std::cv_status::timeout) {
+				if (m_semaphore.wait(60000000) == false) {
 					ETHREAD_VERBOSE("RUN: time-out");
 					continue;
 				}
@@ -56,11 +55,8 @@ void ethread::PoolExecutor::threadCallback() {
 void ethread::PoolExecutor::start() {
 	ETHREAD_DEBUG("START: thread in Pool [START]");
 	m_running = true;
-	{
-		ethread::UniqueLock lock(m_mutex);
-		m_condition.notify_all();
-	}
-	m_thread = ememory::makeShared<ethread::Thread>([&](void *){ this->threadCallback();}, nullptr);
+	m_semaphore.post();
+	m_thread = ememory::makeShared<ethread::Thread>([&](){ threadCallback();});
 	if (m_thread == nullptr) {
 		m_running = false;
 		ETHREAD_ERROR("START: thread in Pool [STOP] can not intanciate THREAD!");
@@ -72,20 +68,14 @@ void ethread::PoolExecutor::start() {
 
 void ethread::PoolExecutor::stop() {
 	ETHREAD_DEBUG("STOP: thread in Pool [START]");
-	{
-		ethread::UniqueLock lock(m_mutex);
-		m_condition.notify_all();
-	}
+	m_semaphore.post();
 	m_running = false;
 	ETHREAD_DEBUG("STOP: thread in Pool [STOP]");
 }
 
 void ethread::PoolExecutor::join() {
 	ETHREAD_DEBUG("JOIN: thread in Pool [START]");
-	{
-		ethread::UniqueLock lock(m_mutex);
-		m_condition.notify_all();
-	}
+	m_semaphore.post();
 	if (m_thread != nullptr) {
 		ETHREAD_DEBUG("JOIN: waiting ...");
 		m_thread->join();
@@ -95,14 +85,13 @@ void ethread::PoolExecutor::join() {
 }
 
 bool ethread::PoolExecutor::touch() {
-	ethread::UniqueLock lock(m_mutex);
 	bool ret = false;
 	if (    m_needProcess == false
 	     && m_isWaiting == true) {
 		ETHREAD_VERBOSE("Touch ...");
 		m_needProcess = true;
 		ret = true;
-		m_condition.notify_all();
+		m_semaphore.post();
 	}
 	return ret;
 }

@@ -32,7 +32,7 @@ namespace ethread {
 			etk::String m_name; //!< Name of the thread (do not get it on the system ==> more portable)
 			etk::Function<void()> m_function; //!< Function to call every cycle of the thead running
 		public:
-			Thread(etk::Function<void()>&& _call, const etk::String& _name);
+			Thread(etk::Function<void()>&& _call, const etk::String& _name = "");
 			~Thread();
 			void join();
 			bool detach();

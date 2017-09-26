@@ -20,8 +20,7 @@ namespace ethread {
 	 */
 	class PoolExecutor {
 		private: //section to permit to optimize CPU:
-			ethread::Mutex m_mutex; //!< protection of the internal data.
-			std::condition_variable m_condition; //!< Message system to send event on an other thread.
+			ethread::Semaphore m_semaphore; //!< protection of the internal data.
 			bool m_needProcess; //!< Need to do action (no need to wait condition).
 			bool m_isWaiting; //!< The executor is waiting to some action to do.
 		private:

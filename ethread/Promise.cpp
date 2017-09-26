@@ -7,6 +7,7 @@
 #include "debug.hpp"
 #include <ethread/Future.hpp>
 #include <ethread/Promise.hpp>
+#include <ethread/tools.hpp>
 #include <echrono/Steady.hpp>
 #include <etk/typeInfo.hpp>
 ETK_DECLARE_TYPE(ethread::Promise);

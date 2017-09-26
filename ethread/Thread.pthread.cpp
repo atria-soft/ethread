@@ -32,7 +32,7 @@ ethread::Thread::Thread(etk::Function<void()>&& _call, const etk::String& _name)
 	uint32_t iii = ethread::getId();
 	pthread_create(&m_thread, nullptr, &ethread::Thread::threadCallback, this);
 	m_uid = ethread::getThreadHumanId(uint64_t(m_thread));
-	printf("New thread: %d from %d", m_uid, iii);
+	printf("New thread: %ld from %d\n", m_uid, iii);
 }
 
 ethread::Thread::~Thread() {
