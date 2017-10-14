@@ -48,21 +48,21 @@ namespace ethread {
 		etk::Map<uint64_t,etk::String>& list = getThreadList();
 		uint32_t threadID = getThreadHumanId(_id);
 		etk::String out;
-		// TODO: g_lock.lock();
+		g_lock.lock();
 		auto it = list.find(threadID);
 		if (it != list.end()) {
 			out = it.getValue();
 		}
-		// TODO: g_lock.unlock();
+		g_lock.unLock();
 		return out;
 	}
 	
 	void setThreadName(ethread::Thread* _thread, const etk::String& _name) {
 		etk::Map<uint64_t,etk::String>& list = getThreadList();
 		uint32_t threadID = ethread::getId();
-		// TODO: g_lock.lock();
+		g_lock.lock();
 		list.set(threadID, _name);
-		// TODO: g_lock.unlock();
+		g_lock.unLock();
 		// try now to set the thread name with Pthread
 		#if    (    defined(__TARGET_OS__Linux) \
 		         || defined(__TARGET_OS__Android) \
@@ -119,7 +119,6 @@ etk::String ethread::getName(ethread::Thread& _thread) {
 #if    defined(__TARGET_OS__Linux) \
     && !defined(__TARGET_OS__Web)
 	static void setThreadPriority(pthread_t _threadID, int32_t _priority) {
-		#if 0
 		int retcode;
 		int policy;
 		struct sched_param param;
@@ -143,10 +142,8 @@ etk::String ethread::getName(ethread::Thread& _thread) {
 			                                     "???") );
 			*/
 		}
-		#endif
 	}
 	static int32_t getThreadPriority(pthread_t _threadID) {
-		/*
 		int retcode;
 		int policy;
 		struct sched_param param;
@@ -159,35 +156,28 @@ etk::String ethread::getName(ethread::Thread& _thread) {
 			return -param.sched_priority;
 		}
 		return param.sched_priority;
-		*/
 		return 0;
 	}
 #endif
 
 
 void ethread::setPriority(int32_t _priority) {
-	/*
 	#if    defined(__TARGET_OS__Linux) \
 	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = pthread_self();
 		setThreadPriority(threadID, _priority);
 	#endif
-	*/
-	
 }
 
 void ethread::setPriority(ethread::Thread& _thread, int32_t _priority) {
-	/*
 	#if    defined(__TARGET_OS__Linux) \
 	    && !defined(__TARGET_OS__Web)
-		pthread_t threadID = (pthread_t) _thread.native_handle();
+		pthread_t threadID = _thread.getNativeHandle();
 		setThreadPriority(threadID, _priority);
 	#endif
-	*/
 }
 
 int32_t ethread::getPriority() {
-	/*
 	#if    defined(__TARGET_OS__Linux) \
 	    && !defined(__TARGET_OS__Web)
 		pthread_t threadID = pthread_self();
@@ -195,21 +185,16 @@ int32_t ethread::getPriority() {
 	#else
 		return 20;
 	#endif
-	*/
-	return 20;
 }
 
 int32_t ethread::getPriority(ethread::Thread& _thread) {
-	/*
 	#if    defined(__TARGET_OS__Linux) \
 	    && !defined(__TARGET_OS__Web)
-		pthread_t threadID = static_cast<pthread_t>(_thread.native_handle());
+		pthread_t threadID = _thread.getNativeHandle();
 		return getThreadPriority(threadID);
 	#else
 		return 20;
 	#endif
-	*/
-	return 20;
 }
 
 //static ethread::Mutex g_localMutex;
