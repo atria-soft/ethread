@@ -69,7 +69,7 @@ namespace ethread {
 		       ) \
 		    && !defined(__TARGET_OS__Web)
 			pthread_t pthreadID;
-			if (_thread == nullptr) {
+			if (_thread == null) {
 				pthreadID = pthread_self();
 			} else {
 				pthreadID = _thread->getNativeHandle();
@@ -99,7 +99,7 @@ uint32_t ethread::getId(ethread::Thread& _thread) {
 }
 
 void ethread::setName(const etk::String& _name) {
-	setThreadName(nullptr, _name);
+	setThreadName(null, _name);
 }
 
 void ethread::setName(ethread::Thread& _thread, const etk::String& _name) {

@@ -17,7 +17,7 @@ ETK_DECLARE_TYPE(ethread::UniqueLock);
 
 ethread::Mutex::Mutex() {
 	// create interface mutex :
-	int ret = pthread_mutex_init(&m_mutex, nullptr);
+	int ret = pthread_mutex_init(&m_mutex, null);
 	//ETHREAD_ASSERT(ret == 0, "Error creating Mutex ...");
 }
 

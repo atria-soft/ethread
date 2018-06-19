@@ -22,7 +22,7 @@ namespace ethread {
 			 * @brief Simple Future contructor
 			 * @param[in] _promise Associated promise to wait
 			 */
-			Future(ememory::SharedPtr<ethread::Promise> _promise=nullptr);
+			Future(ememory::SharedPtr<ethread::Promise> _promise=null);
 			/**
 			 * @brief Check if the action is finished
 			 * @return true, the action is done, false otherwise

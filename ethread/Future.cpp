@@ -16,7 +16,7 @@ ethread::Future::Future(ememory::SharedPtr<ethread::Promise> _promise):
 }
 
 bool ethread::Future::isFinished() {
-	if (m_promise == nullptr) {
+	if (m_promise == null) {
 		ETHREAD_ERROR("Promise does not exist...");
 		return true;
 	}
@@ -24,7 +24,7 @@ bool ethread::Future::isFinished() {
 }
 
 bool ethread::Future::wait(echrono::Duration _delay) {
-	if (m_promise == nullptr) {
+	if (m_promise == null) {
 		ETHREAD_ERROR("Promise does not exist...");
 		return false;
 	}
@@ -32,7 +32,7 @@ bool ethread::Future::wait(echrono::Duration _delay) {
 }
 
 void ethread::Future::andThen(etk::Function<void()> _action) {
-	if (m_promise == nullptr) {
+	if (m_promise == null) {
 		ETHREAD_ERROR("Promise does not exist...");
 		return;
 	}

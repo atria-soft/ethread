@@ -15,7 +15,7 @@ ethread::Pool::Pool(uint16_t _numberOfThread):
 	ethread::UniqueLock lock(m_mutex);
 	for (uint32_t iii=0; iii<_numberOfThread; ++iii) {
 		ememory::SharedPtr<ethread::PoolExecutor> tmp = ememory::makeShared<ethread::PoolExecutor>(*this);
-		if (tmp != nullptr) {
+		if (tmp != null) {
 			tmp->start();
 			m_listThread.pushBack(tmp);
 		}
@@ -34,7 +34,7 @@ uint32_t ethread::Pool::createGroupId() {
 
 ethread::Future ethread::Pool::async(etk::Function<void()> _call, uint64_t _executionInGroupId) {
 	ethread::UniqueLock lock(m_mutex);
-	if (_call == nullptr) {
+	if (_call == null) {
 		ETHREAD_ERROR("Can not add an action with no function to call...");
 		return ethread::Future();
 	}
@@ -42,7 +42,7 @@ ethread::Future ethread::Pool::async(etk::Function<void()> _call, uint64_t _exec
 	ememory::SharedPtr<ethread::PoolAction> action = ememory::makeShared<ethread::PoolAction>(_executionInGroupId, promise, _call);
 	m_listActions.pushBack(action);
 	for(auto &it : m_listThread) {
-		if (it == nullptr) {
+		if (it == null) {
 			continue;
 		}
 		if (it->touch() == true) {
@@ -73,7 +73,7 @@ ememory::SharedPtr<ethread::PoolAction> ethread::Pool::getAction() {
 	ethread::UniqueLock lock(m_mutex);
 	auto it = m_listActions.begin();
 	while (it != m_listActions.end()) {
-		if (*it == nullptr) {
+		if (*it == null) {
 			it = m_listActions.erase(it);
 			continue;
 		}
@@ -98,7 +98,7 @@ ememory::SharedPtr<ethread::PoolAction> ethread::Pool::getAction() {
 		}
 		++it;
 	}
-	return nullptr;
+	return null;
 }
 
 
@@ -106,7 +106,7 @@ void ethread::Pool::stop() {
 	ethread::UniqueLock lock(m_mutex);
 	auto it = m_listThread.begin();
 	while (it != m_listThread.end()) {
-		if (*it == nullptr) {
+		if (*it == null) {
 			it = m_listThread.erase(it);
 			continue;
 		}
@@ -120,7 +120,7 @@ void ethread::Pool::join() {
 	ETHREAD_DEBUG("start join all the threads in pool " << m_listThread.size());
 	for (size_t iii=0; iii<m_listThread.size(); ++iii) {
 		ETHREAD_DEBUG("    join " << iii);
-		if (m_listThread[iii] == nullptr) {
+		if (m_listThread[iii] == null) {
 			continue;
 		}
 		m_listThread[iii]->join();

@@ -17,10 +17,10 @@ namespace ethread {
 
 void* ethread::Thread::threadCallback(void* _userData) {
 	ethread::Thread* threadHandle = static_cast<ethread::Thread*>(_userData);
-	if (threadHandle != nullptr) {
+	if (threadHandle != null) {
 		threadHandle->threadCall();
 	}
-	return nullptr;
+	return null;
 }
 
 
@@ -30,7 +30,7 @@ ethread::Thread::Thread(etk::Function<void()>&& _call, const etk::String& _name)
   m_name(_name),
   m_function(etk::move(_call)) {
 	uint32_t iii = ethread::getId();
-	pthread_create(&m_thread, nullptr, &ethread::Thread::threadCallback, this);
+	pthread_create(&m_thread, null, &ethread::Thread::threadCallback, this);
 	m_uid = ethread::getThreadHumanId(uint64_t(m_thread));
 	printf("New thread: %ld from %d\n", m_uid, iii);
 }
@@ -40,7 +40,7 @@ ethread::Thread::~Thread() {
 }
 
 void ethread::Thread::join() {
-	void* ret = nullptr;
+	void* ret = null;
 	int val = pthread_join(m_thread, &ret);
 }
 
@@ -59,7 +59,7 @@ const etk::String& ethread::Thread::getName() const {
 }
 
 void ethread::Thread::threadCall() {
-	if (m_function != nullptr) {
+	if (m_function != null) {
 		m_function();
 	}
 }

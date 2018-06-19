@@ -30,12 +30,12 @@ void ethread::Promise::finish() {
 			return;
 		}
 		m_isFinished = true;
-		if (m_callback != nullptr) {
+		if (m_callback != null) {
 			// call callbacks ...
 			callback = etk::move(m_callback);
 		}
 	}
-	if (callback != nullptr) {
+	if (callback != null) {
 		callback();
 	}
 }

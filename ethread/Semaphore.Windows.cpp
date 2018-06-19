@@ -11,7 +11,7 @@ ETK_DECLARE_TYPE(ethread::Semaphore);
 
 etk::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {
 	// create interface mutex :
-	m_semaphore = CreateSemaphore(nullptr, _nbBasicElement, _nbMessageMax, nullptr);
+	m_semaphore = CreateSemaphore(null, _nbBasicElement, _nbMessageMax, null);
 	TK_ASSERT(m_semaphore != 0, "Error creating SEMAPHORE ...");
 }
 
@@ -27,7 +27,7 @@ uint32_t etk::Semaphore::getCount() {
 }
 
 void etk::Semaphore::post() {
-	ReleaseSemaphore(m_semaphore, 1, nullptr);
+	ReleaseSemaphore(m_semaphore, 1, null);
 }
 
 

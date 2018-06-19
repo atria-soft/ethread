@@ -29,7 +29,7 @@ void ethread::PoolExecutor::threadCallback() {
 	while (m_running == true) {
 		// get an action:
 		m_action = m_pool.getAction();
-		if (m_action == nullptr) {
+		if (m_action == null) {
 			// If no action availlable and not requested to check, just sleep ...
 			if (m_needProcess == false) {
 				m_isWaiting = true;
@@ -57,7 +57,7 @@ void ethread::PoolExecutor::start() {
 	m_running = true;
 	m_semaphore.post();
 	m_thread = ememory::makeShared<ethread::Thread>([&](){ threadCallback();});
-	if (m_thread == nullptr) {
+	if (m_thread == null) {
 		m_running = false;
 		ETHREAD_ERROR("START: thread in Pool [STOP] can not intanciate THREAD!");
 		return;
@@ -76,7 +76,7 @@ void ethread::PoolExecutor::stop() {
 void ethread::PoolExecutor::join() {
 	ETHREAD_DEBUG("JOIN: thread in Pool [START]");
 	m_semaphore.post();
-	if (m_thread != nullptr) {
+	if (m_thread != null) {
 		ETHREAD_DEBUG("JOIN: waiting ...");
 		m_thread->join();
 		m_thread.reset();

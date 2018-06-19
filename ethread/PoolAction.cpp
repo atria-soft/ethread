@@ -21,13 +21,13 @@ uint64_t ethread::PoolAction::getPoolId() const {
 }
 
 void ethread::PoolAction::call() {
-	if (m_call == nullptr) {
+	if (m_call == null) {
 		return;
 	}
-	if (m_call != nullptr) {
+	if (m_call != null) {
 		m_call();
 	}
-	if (m_promise != nullptr) {
+	if (m_promise != null) {
 		m_promise->finish();
 	}
 }

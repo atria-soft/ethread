@@ -12,10 +12,10 @@ ETK_DECLARE_TYPE(ethread::Semaphore);
 
 ethread::Semaphore::Semaphore(uint32_t _nbBasicElement, uint32_t _nbMessageMax) {
 	// create interface mutex :
-	int ret = pthread_mutex_init(&m_mutex, nullptr);
+	int ret = pthread_mutex_init(&m_mutex, null);
 	//TK_ASSERT(ret == 0, "Error creating Mutex ...");
 	// create contition :
-	ret = pthread_cond_init(&m_condition, nullptr);
+	ret = pthread_cond_init(&m_condition, null);
 	//TK_ASSERT(ret == 0, "Error creating Condition ...");
 	if (ret != 0) {
 		ret = pthread_mutex_destroy(&m_mutex);
@@ -71,7 +71,7 @@ bool ethread::Semaphore::wait(uint64_t _timeOutInUs) {
 	if(m_data == 0) {
 		struct timeval tp;
 		struct timespec ts;
-		gettimeofday(&tp, nullptr);
+		gettimeofday(&tp, null);
 		uint64_t totalTimeUS = tp.tv_sec * 1000000 + tp.tv_usec;
 		totalTimeUS += _timeOutInUs;
 		ts.tv_sec = totalTimeUS / 1000000;
