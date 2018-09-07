@@ -60,7 +60,7 @@ def configure(target, my_module):
 	my_module.compile_version("c++", 2011)
 	# add dependency of the generic C++ library:
 	my_module.add_depend([
-	    'etk-base',
+	    'etk-core',
 	    ])
 	#pthread is not availlable on Windows
 	if    "Linux" in target.get_type() \
